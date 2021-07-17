@@ -15,13 +15,18 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           backgroundColor: Colors.indigoAccent,
           appBar: AppBar(
-            title: Text(
-              'Weather App',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30,
+            title: Center(
+              child: Text(
+                'Weather App',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 30,
+                ),
               ),
             ),
+            actions: [
+              Icon(Icons.add_box_rounded,size: 50,),
+            ],
           ),
           body: Column(
             children: [
