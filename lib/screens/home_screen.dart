@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './add_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -12,6 +13,12 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(Icons.add),
             onPressed: () { 
               print('add button clicked...');
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AddScreen(),
+                ),
+              );
             },
           ),
         ],
