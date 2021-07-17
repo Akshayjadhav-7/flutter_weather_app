@@ -44,3 +44,9 @@ class _detailedState extends State<detailed> {
   }
 }
 // TODO Implement this library.
+
+
+
+
+
+
