@@ -1,7 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_app/Home.dart';
-import 'detailedcity.dart';
+import 'package:flutter_weather_app/Screens/Home.dart';
+import 'Screens/detailedcity.dart';
+import 'Screens/search_screen.dart';
 
 void main() {
   runApp(MyApp());
