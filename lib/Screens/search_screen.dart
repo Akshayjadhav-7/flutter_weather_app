@@ -1,20 +1,25 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/cupertino.dart';
 class search_screen extends StatelessWidget {
+
+  Icon SearchIcon = Icon(Icons.search_outlined);
+  Widget Appbar = Text('Mumbai',style: TextStyle(fontSize: 30),);
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: () {},
-            icon: Icon(Icons.search_outlined),
+            onPressed: () {
+
+
+
+            },
+            icon: SearchIcon,
             iconSize: 40,
           ),
-          title: Text(
-            "Mumbai",
-            style: TextStyle(fontSize: 40),
-          ),
+          title: Appbar,
         ),
         body: SafeArea(
           child: Padding(
