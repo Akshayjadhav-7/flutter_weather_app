@@ -75,25 +75,25 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(32.0),
           child: Column(
             children: [
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: citytile('03:00','Mumbai','30 C')),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: citytile('04:00','Kolkata','35 C')),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: citytile('05:00','Delhi','40 C')),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: citytile('06:00','Banglore','45 C')),
               SizedBox(
                 height: 15,
               ),
               Card(
                 color: Colors.white70,
-                child: citytile(),
+                child: citytile('09:00','Lahore','50 C'),
               ),
             ],
           ),
@@ -108,20 +108,26 @@ class citytile extends StatelessWidget {
   //   Key? key,
   // }) : super(key: key);
 
+  final String time;
+  final String city;
+  final String temperature;
+
+  citytile(this.time, this.city, this.temperature);
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () {},
       title: Text(
-        '03:00 pm',
+        time,
         style: TextStyle(fontSize: 30),
       ),
       subtitle: Text(
-        'Chennai',
+        city,
         style: TextStyle(fontSize: 40),
       ),
       trailing: Text(
-        '30 C',
+        temperature,
         style: TextStyle(fontSize: 30),
       ),
     );
