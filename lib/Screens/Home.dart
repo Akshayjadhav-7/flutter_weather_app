@@ -1,21 +1,23 @@
 import 'dart:convert';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_app/Screens/detailedcity.dart';
 import 'search_screen.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class Temperature {
   final String base;
   final int visibility;
-
+  // final int temp;
   Temperature({
     required this.base,
     required this.visibility,
+    // required this.temp,
   });
 
   factory Temperature.fromJson(Map<String, dynamic> json) {
-    return Temperature(base: json['base'], visibility: json['visibility']);
+    return Temperature(base: json['base'], visibility: json['visibility'],);
   }
 }
 
@@ -32,9 +34,17 @@ class _HomeState extends State<Home> {
 
     print('response = $response');
 
+
+
     var t = Temperature.fromJson(jsonDecode(response.body));
     // Map< String,dynamic >response2 = json.decode(response.body);
+
+    var temp = Temperature.fromJson(jsonDecode(response)['base'][0]['temp']);
+    print(temp);
+    
     print(t.visibility);
+    print(t.base);
+    // print(t.temp);
   }
 
   @override
@@ -42,11 +52,15 @@ class _HomeState extends State<Home> {
     void initState() {
       super.initState();
       searchTemp();
+      Timer.periodic(Duration(seconds: 1),(Timer t)=> getTime());
     }
 
     searchTemp();
+    // final instance = new Temperature(base: t.);
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+
+
+    debugShowCheckedModeBanner: false,
       home: Scaffold(
         appBar: AppBar(
           title: Center(
@@ -75,25 +89,26 @@ class _HomeState extends State<Home> {
           padding: const EdgeInsets.all(32.0),
           child: Column(
             children: [
-              Card(color: Colors.white70, child: citytile()),
+
+              Card(color: Colors.white70, child: CityTile('03:00 pm','Mumbai','30 C'),),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: CityTile('03:30 pm','chennai','32 C'),),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: CityTile('03:45 pm','mumbai','31 C'),),
               SizedBox(
                 height: 15,
               ),
-              Card(color: Colors.white70, child: citytile()),
+              Card(color: Colors.white70, child: CityTile('02:30 pm','Lahore','35 C'),),
               SizedBox(
                 height: 15,
               ),
               Card(
                 color: Colors.white70,
-                child: citytile(),
+                child: CityTile('04:00 pm','Singapore','33 C'),
               ),
             ],
           ),
@@ -103,27 +118,40 @@ class _HomeState extends State<Home> {
   }
 }
 
-class citytile extends StatelessWidget {
-  // const citytile({
-  //   Key? key,
-  // }) : super(key: key);
+class CityTile extends StatelessWidget {
 
+ final String time ;
+ final String city;
+ final String temp2;
+
+ CityTile(this.time,this.city,this.temp2);
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: () {
+        
+        Navigator.push(context, MaterialPageRoute(builder: (context) => detailed(),),);
+
+      },
       title: Text(
-        '03:00 pm',
+        time,
         style: TextStyle(fontSize: 30),
       ),
       subtitle: Text(
-        'Chennai',
+        city,
         style: TextStyle(fontSize: 40),
       ),
       trailing: Text(
-        '30 C',
+        temp2,
         style: TextStyle(fontSize: 30),
       ),
     );
   }
+}
+
+void getTime(){
+String _timeString;
+final datetime = DateFormat('yyyy-MM-dd \n kk:mm:ss').format(DateTime.now()).toString();
+_timeString = datetime;
+print(_timeString);
 }

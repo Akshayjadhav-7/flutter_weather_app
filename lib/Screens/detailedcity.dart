@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_weather_app/Screens/Home.dart';
 
 class detailed extends StatefulWidget {
   @override
@@ -38,6 +39,7 @@ class _detailedState extends State<detailed> {
                 child: Column(
                   children: [
                     Text(
+
                       "30 C",
                       style: TextStyle(
                         fontSize: 120,
