@@ -7,20 +7,37 @@ import 'package:http/http.dart' as http;
 
 const cities = ['Mumbai','London','Kolkata','Delhi','Lahore'];
 
+List<Temperature> tempList = [];
+Future<List<Temperature>> searchTemp() async {
+print('\n\n12-----------------------=====${tempList.length}');
+  for(var i=0; i<cities.length;i++) {
+    print('---------------loop $i ${cities[i]}');
+    var response = await http.get(Uri.parse(
+        'http://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=6c2672b40acf8eba142697cf18cf278b&units=metric'));
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load album');
+    }
+    tempList.add(Temperature.fromJson(jsonDecode(response.body)));
+    print('\n\n21-----------------------=====${tempList.length}');
+  }
+print('\n\n23-----------------------=====${tempList.length}');
+return tempList;
+}
+
 class Temperature {
-  final String base;
-  final int visibility;
-  // final String temp;
+  final double temp;
+  final String name;
+
   Temperature({
-    required this.base,
-    required this.visibility,
-    // required this.temp,
+    required this.temp,
+    required this.name,
+
   });
 
   factory Temperature.fromJson(Map<String, dynamic> json) {
     return Temperature(
-      base: json['base'],
-      visibility: json['visibility'],
+      temp: json['main']['temp'],
+      name: json['name'],
     );
   }
 }
@@ -29,35 +46,22 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
+
 double tempMumbai = 0;
+
+
 class _HomeState extends State<Home> {
-  Future<void> searchTemp() async {
-    var response = await http.get(Uri.parse(
-        'http://api.openweathermap.org/data/2.5/weather?q=Mumbai&appid=6c2672b40acf8eba142697cf18cf278b&units=metric'));
+  late Future<List<Temperature>> futureTemp;
 
-    // print('response = $response');
-
-    var t = Temperature.fromJson(jsonDecode(response.body));
-    // Map< String,dynamic >response2 = json.decode(response.body);
-
-    Map data = jsonDecode(response.body);
-    Map main = data['main'];
-    Map cord = data['coord'];
-    double lonmumbai = cord['lon'];
-    double latmumbai = cord['lat'];
-     tempMumbai = main['temp'];
-    int humiditymumbai = main['humidity'];
-    print('Log & Lat of mumbai is: $lonmumbai : $latmumbai');
-    print('Tempreature of mumbai is: $tempMumbai');
-    print('humidity of mumbai: $humiditymumbai');
-    print(t.visibility);
-    print(t.base);
-    // print(t.temp);
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+   futureTemp =  searchTemp();
   }
-
   @override
   Widget build(BuildContext context) {
-    searchTemp();
+
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -90,26 +94,43 @@ class _HomeState extends State<Home> {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: [
-                  Container(
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                      itemCount: cities.length,
-
-
+              child: FutureBuilder(future : futureTemp, builder: (context,c){
+                if(!c.hasData){
+                  return Center(
+                    child: CircularProgressIndicator()
+                  );
+                }
+                return Column(
+                  children: [
+                    Container(
+                      child: ListView.builder(
+                          shrinkWrap: true,
+                        itemCount: tempList.length,
                         itemBuilder: (context,i){
-                        print('${cities[i]}');
-                        return CityTile(cities[i]);
+                          print('${cities[i]}');
+                          return CityTile(tempList[i].name,tempList[i].temp);
+                          },),
+                    ),
+                  ],
+                );
+              }),
 
-                        }),
-                  ),
-                  // Card(
-                  //   color: Colors.white70,
-                  //   child: CityTile('03:00 pm', 'Mumbai', '$tempMumbai'),
-                  // ),
-                ],
-              ),
+              // child: Column(
+              //   children: [
+              //     Container(
+              //       child: ListView.builder(
+              //           shrinkWrap: true,
+              //         itemCount: tempList.length,
+              //
+              //
+              //           itemBuilder: (context,i){
+              //           print('${cities[i]}');
+              //           return CityTile(tempList[i].name,tempList[i].temp);
+              //
+              //           }),
+              //     ),
+              //   ],
+              // ),
             ),
           ),
         ),
@@ -121,9 +142,9 @@ class _HomeState extends State<Home> {
 class CityTile extends StatelessWidget {
   // final String time;
   final String city;
-  // final String temp;
+  final double temp;
 
-  CityTile( this.city,);
+  CityTile( this.city,this.temp);
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -144,7 +165,7 @@ class CityTile extends StatelessWidget {
         style: TextStyle(fontSize: 40),
       ),
       trailing: Text(
-        '',
+        '$temp',
         style: TextStyle(fontSize: 30),
       ),
     );
