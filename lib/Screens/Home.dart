@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_weather_app/Screens/detailedcity.dart';
 import 'search_screen.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+
+const cities = ['Mumbai','London','Kolkata','Delhi','Lahore'];
 
 class Temperature {
   final String base;
@@ -28,7 +29,7 @@ class Home extends StatefulWidget {
   @override
   _HomeState createState() => _HomeState();
 }
-
+double tempMumbai = 0;
 class _HomeState extends State<Home> {
   Future<void> searchTemp() async {
     var response = await http.get(Uri.parse(
@@ -42,13 +43,13 @@ class _HomeState extends State<Home> {
     Map data = jsonDecode(response.body);
     Map main = data['main'];
     Map cord = data['coord'];
-    double lon = cord['lon'];
-    double lat = cord['lat'];
-    double temp = main['temp'];
-    int humidity = main['humidity'];
-    print('Log & Lat of mumbai is: ${lon} : ${lat}');
-    print('Tempreature of mumbai is: $temp');
-    print('humidity of mumbai: $humidity');
+    double lonmumbai = cord['lon'];
+    double latmumbai = cord['lat'];
+     tempMumbai = main['temp'];
+    int humiditymumbai = main['humidity'];
+    print('Log & Lat of mumbai is: $lonmumbai : $latmumbai');
+    print('Tempreature of mumbai is: $tempMumbai');
+    print('humidity of mumbai: $humiditymumbai');
     print(t.visibility);
     print(t.base);
     // print(t.temp);
@@ -71,6 +72,7 @@ class _HomeState extends State<Home> {
             IconButton(
               onPressed: () {
                 print("pressed");
+                print(tempMumbai);
 
                 Navigator.push(
                   context,
@@ -84,43 +86,31 @@ class _HomeState extends State<Home> {
             ),
           ],
         ),
-        body: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: Column(
-            children: [
-              Card(
-                color: Colors.white70,
-                child: CityTile('03:00 pm', 'Mumbai', '30 C'),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Container(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                      itemCount: cities.length,
+
+
+                        itemBuilder: (context,i){
+                        print('${cities[i]}');
+                        return CityTile(cities[i]);
+
+                        }),
+                  ),
+                  // Card(
+                  //   color: Colors.white70,
+                  //   child: CityTile('03:00 pm', 'Mumbai', '$tempMumbai'),
+                  // ),
+                ],
               ),
-              SizedBox(
-                height: 15,
-              ),
-              Card(
-                color: Colors.white70,
-                child: CityTile('03:30 pm', 'chennai', '32 C'),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Card(
-                color: Colors.white70,
-                child: CityTile('03:45 pm', 'mumbai', '31 C'),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Card(
-                color: Colors.white70,
-                child: CityTile('02:30 pm', 'Lahore', '35 C'),
-              ),
-              SizedBox(
-                height: 15,
-              ),
-              Card(
-                color: Colors.white70,
-                child: CityTile('04:00 pm', 'Singapore', '33 C'),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -129,11 +119,11 @@ class _HomeState extends State<Home> {
 }
 
 class CityTile extends StatelessWidget {
-  final String time;
+  // final String time;
   final String city;
-  final String temp2;
+  // final String temp;
 
-  CityTile(this.time, this.city, this.temp2);
+  CityTile( this.city,);
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -146,7 +136,7 @@ class CityTile extends StatelessWidget {
         );
       },
       title: Text(
-        time,
+        '',
         style: TextStyle(fontSize: 30),
       ),
       subtitle: Text(
@@ -154,7 +144,7 @@ class CityTile extends StatelessWidget {
         style: TextStyle(fontSize: 40),
       ),
       trailing: Text(
-        temp2,
+        '',
         style: TextStyle(fontSize: 30),
       ),
     );
