@@ -1,45 +1,60 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_weather_app/Screens/detailedcity.dart';
-import 'search_screen.dart';
 import 'package:http/http.dart' as http;
+
 import '../widgets/city_tile.dart';
-const cities = ['Mumbai','London','Kolkata','Delhi','Lahore'];
+import 'search_screen.dart';
+import '../config/data.dart';
+import '../config/config.dart';
+import '../classes/temperature.dart';
+
 
 List<Temperature> tempList = [];
-Future<List<Temperature>> searchTemp() async {
-print('\n\n12-----------------------=====${tempList.length}');
-  for(var i=0; i<cities.length;i++) {
-    print('---------------loop $i ${cities[i]}');
-    var response = await http.get(Uri.parse(
-        'http://api.openweathermap.org/data/2.5/weather?q=${cities[i]}&appid=6c2672b40acf8eba142697cf18cf278b&units=metric'));
-    if (response.statusCode != 200) {
-      throw Exception('Failed to load album');
-    }
-    tempList.add(Temperature.fromJson(jsonDecode(response.body)));
-    print('\n\n21-----------------------=====${tempList.length}');
-  }
-print('\n\n23-----------------------=====${tempList.length}');
-return tempList;
-}
 
-class Temperature {
-  final double temp;
-  final String name;
 
-  Temperature({
-    required this.temp,
-    required this.name,
-
+class Album {
+  final String time;
+  Album({
+    required this.time,
   });
-
-  factory Temperature.fromJson(Map<String, dynamic> json) {
-    return Temperature(
-      temp: json['main']['temp'],
-      name: json['name'],
+  factory Album.fromJson(Map<String, dynamic> json) {
+    return Album(
+      time: json['time'],
     );
   }
+}
+
+Future<Album> fetchAlbum() async {
+  var responseTime =  await http.get(Uri.parse('https://www.timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata'));
+  var time1 =  Album.fromJson(jsonDecode(responseTime.body));
+  print(time1.time);
+  return time1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+Future<List<Temperature>> searchTemp() async {
+  for(var i=0; i<cities.length;i++) {
+    var response = await http.get(Uri.parse(
+        '$baseUrl?q=${cities[i]}&appid=$apiKey&units=$unit'));
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load album');
+
+    }
+    tempList.add(Temperature.fromJson(jsonDecode(response.body)));
+  }
+return tempList;
 }
 
 class Home extends StatefulWidget {
@@ -47,22 +62,17 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-double tempMumbai = 0;
-
-
 class _HomeState extends State<Home> {
   late Future<List<Temperature>> futureTemp;
-
-@override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
    futureTemp =  searchTemp();
+   fetchAlbum();
   }
   @override
   Widget build(BuildContext context) {
-
-
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
@@ -76,8 +86,6 @@ class _HomeState extends State<Home> {
             IconButton(
               onPressed: () {
                 print("pressed");
-                print(tempMumbai);
-
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -108,29 +116,19 @@ class _HomeState extends State<Home> {
                         itemCount: tempList.length,
                         itemBuilder: (context,i){
                           print('${cities[i]}');
-                          return CityTile(tempList[i].name,tempList[i].temp);
+
+                          print(tempList[i].timezone);
+                          var utcTime = DateTime.now().toUtc();
+                          
+                          var addTime = utcTime.add(Duration (seconds: tempList[i].timezone));
+
+                          return CityTile(tempList[i].name,tempList[i].temp,addTime);
                           },),
                     ),
                   ],
                 );
               }),
 
-              // child: Column(
-              //   children: [
-              //     Container(
-              //       child: ListView.builder(
-              //           shrinkWrap: true,
-              //         itemCount: tempList.length,
-              //
-              //
-              //           itemBuilder: (context,i){
-              //           print('${cities[i]}');
-              //           return CityTile(tempList[i].name,tempList[i].temp);
-              //
-              //           }),
-              //     ),
-              //   ],
-              // ),
             ),
           ),
         ),

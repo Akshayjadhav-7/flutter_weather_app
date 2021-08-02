@@ -6,6 +6,9 @@ import 'Screens/search_screen.dart';
 
 void main() {
   runApp(new MyApp());
+
+
+  
 }
 
 class MyApp extends StatelessWidget {
