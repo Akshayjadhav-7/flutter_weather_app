@@ -1,65 +1,96 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_weather_app/Screens/detailedcity.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 class CityTile extends StatelessWidget {
   final DateTime time;
   final String city;
-  final double temp;
+  final int temp;
   final String weather;
   final IconData iconWeather;
+  final int visibility;
+  final int pressure;
+  final int humidity;
+  final double lon;
+  final double lat;
+  final String country;
+  final double tempMin;
+  final double tempMax;
   CityTile(
-    this.city,
-    this.temp,
-    this.time,
-    this.weather,
-      this.iconWeather
-  );
+      this.city,
+      this.temp,
+      this.time,
+      this.weather,
+      this.iconWeather,
+      this.visibility,
+      this.pressure,
+      this.humidity,
+      this.lon,
+      this.lat,
+      this.country,
+      this.tempMin,
+      this.tempMax);
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 120,
-      child: Card(
-        elevation: 5,
-        color: Colors.white,
-        margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
-        child: ListTile(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => detailed(),
-              ),
-            );
-          },
-          title: Text(
-            getTime(time),
-            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-          ),
-          subtitle: Text(
-            city,
-            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-          ),
-          trailing: Column(
-            children: [
-              Text(
-                '$weather',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Card(
+          elevation: 5,
+          color: Colors.white,
+          margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+          child: ListTile(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailedScreen(
+                    time,
+                    temp,
+                    weather,
+                    city,
+                    visibility,
+                    pressure,
+                    humidity,
+                    lon,
+                    lat,
+                    country,
+                    tempMin,
+                    tempMax,
+                  ),
                 ),
+              );
+            },
+            title: Text(getTime(time),
+                style: GoogleFonts.lato(
+                  textStyle:
+                      TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                )),
+            subtitle: Text(
+              city,
+              style: GoogleFonts.lato(
+                textStyle: TextStyle(fontSize: 30, color: Colors.black),
               ),
-              Text(
-                '$temp',
-                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          leading:
-          Icon(
-            iconWeather,
-            // Icons.cloud_rounded,
-            // color: Colors.green,
-            // size: 30.0,
+            ),
+            trailing: Column(
+              children: [
+                Text('$weather',
+                    style: GoogleFonts.lato(
+                      textStyle:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    )),
+                Text('${temp} °C',
+                    style: GoogleFonts.lato(
+                      textStyle:
+                          TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    )),
+              ],
+            ),
+            leading: Icon(
+              iconWeather,
+            ),
           ),
         ),
       ),
@@ -79,16 +110,3 @@ String getTime(time) {
     return hhm + 'am';
   }
 }
-
-// Icon getWeather(weather) {
-//   if (weather != null) {
-//     print('not null');
-//
-//     weather = Icon(
-//       Icons.cloud_rounded,
-//     );
-//   } else {
-//     print('it is null');
-//   }
-//   return weather;
-// }

@@ -1,20 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart';
 import 'package:flutter_weather_app/Screens/Home.dart';
+import 'package:intl/intl.dart';
 import '../widgets/city_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../classes/temperature.dart';
 
-class detailed extends StatefulWidget {
+DateTime dateToday = new DateTime.now();
+String date = dateToday.toString().substring(0, 10);
+
+class DetailedScreen extends StatefulWidget {
+  DateTime cityTime;
+  int cityTemp;
+  String cityName;
+  String cityWeather;
+  final int visibility;
+  final int cityPressure;
+  final int cityHumidity;
+  final double lon;
+  final double lat;
+  final String country;
+  final double cityTempMin;
+  final double cityTempMax;
+  DetailedScreen(
+      this.cityTime,
+      this.cityTemp,
+      this.cityName,
+      this.cityWeather,
+      this.visibility,
+      this.cityPressure,
+      this.cityHumidity,
+      this.lon,
+      this.lat,
+      this.country,
+      this.cityTempMin,
+      this.cityTempMax);
+
   @override
-  _detailedState createState() => _detailedState();
+  // State<StatefulWidget> createState() {
+  //   return detailedState (this.cityWeather,this.cityTime,this.cityTemp,this.cityName);
+  // }
+  State<StatefulWidget> createState() => _DetailedScreenState();
+  // _detailedState createState() => _detailedState();
 }
 
-class _detailedState extends State<detailed> {
+class _DetailedScreenState extends State<DetailedScreen> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.indigo,
           appBar: AppBar(
             leading: IconButton(
               onPressed: () {
@@ -24,258 +59,339 @@ class _detailedState extends State<detailed> {
               icon: Icon(Icons.arrow_back_ios),
             ),
             title: Text(
-              'tempList[i].name',
+              '${widget.cityWeather}',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          body: SafeArea(
+          body: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.all(32.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
                   Container(
-                    alignment: Alignment.topCenter,
                     child: Column(
                       children: [
                         Text(
-                          '3 August 2021',
+                          '$date',
                           style: GoogleFonts.lato(
                             textStyle: TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 40,
-                              color: Colors.white,
+                              fontSize: 30,
+                              color: Colors.black,
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: 30,
-                        ),
                         Text(
-                          'addTime',
-                          style: GoogleFonts.lato(
-                            textStyle: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 40,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Text(
-                          'tempList[i].temp 30c',
+                          '${widget.cityTemp} °C',
                           style: GoogleFonts.lato(
                               textStyle: TextStyle(
-                            fontSize: 100,
-                            fontWeight: FontWeight.bold,
-                                color: Colors.white
-                          )),
+                                  fontSize: 150,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
                         ),
-                        Text('tempList[i].weatherCondition',
+                        Text(widget.cityName,
                             style: GoogleFonts.lato(
                               textStyle: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 30,
-                                  color: Colors.white),
+                                  color: Colors.black),
                             )),
-                        SizedBox(
-                          height: 25,
+                        Divider(
+                          height: 20,
+                          color: Colors.indigo,
+                          indent: 100,
+                          endIndent: 100,
+                          thickness: 1,
                         ),
                         Container(
                           height: 100,
-                          child: Card(
-                            color: Colors.cyan[700],
-                            elevation: 10,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Container(
-                                  child: Column(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.cyan[700],
+                              elevation: 10,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'MinTemp.',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.cityTempMin}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  VerticalDivider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                    width: 20,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'MaxTemp',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.cityTempMax}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          height: 100,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.cyan[700],
+                              elevation: 10,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
                                         'Visibility',
-                                        style: GoogleFonts.lato(textStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25,
-                                          color: Colors.black,
-                                        ),),
-                                      ),
-                                      SizedBox(
-                                        height: 5,
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
                                       ),
                                       Text(
-                                        '3000',
-                                        style: GoogleFonts.lato(textStyle: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 30,
-                                          color: Colors.white,
-                                        ),),
+                                        '${widget.visibility}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ),
                                     ],
                                   ),
-                                ),VerticalDivider(
-                            color: Colors.black,thickness: 2,
-                            width: 20,),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Pressure',
-                                      style:  GoogleFonts.lato(textStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                        color: Colors.black,
-                                      ),),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      '1007',
-                                      style:  GoogleFonts.lato(textStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Colors.white,
-                                      ),),
-                                    ),
-                                  ],
-                                ),VerticalDivider(
-                            color: Colors.black,thickness: 2,
-                            width: 20,),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Humidity',
-                                      style:  GoogleFonts.lato(textStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 25,
-                                        color: Colors.black,
-                                      ),),
-                                    ),
-                                    SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      '47',
-                                      style:  GoogleFonts.lato(textStyle: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 30,
-                                        color: Colors.white,
-                                      ),),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                  VerticalDivider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                    width: 20,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Pressure',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.cityPressure}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        )
+                        ),
+                        Container(
+                          height: 100,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Card(
+                              color: Colors.cyan[700],
+                              elevation: 10,
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Humidity',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.cityHumidity}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  VerticalDivider(
+                                    color: Colors.black,
+                                    thickness: 2,
+                                    width: 20,
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Country',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 22,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Text(
+                                        '${widget.country}',
+                                        style: GoogleFonts.lato(
+                                          textStyle: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   Container(
                     height: 100,
-                    child: Card(
-                      color: Colors.cyan[700],
-                      elevation: 10,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Container(
-                            child: Column(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Card(
+                        color: Colors.cyan[700],
+                        elevation: 10,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   'Longitude',
-                                  style:  GoogleFonts.lato(textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                    color: Colors.black,
-                                  ),),
-                                ),
-                                SizedBox(
-                                  height: 5,
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                                 Text(
-                                  '80.2785',
-                                  style:  GoogleFonts.lato(textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                    color: Colors.white,
-                                  ),),
+                                  '${widget.lon}',
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),VerticalDivider(
-                      color: Colors.black,
-                            thickness: 2,
-                      width: 20,),
-                          Container(
-                            child: Column(
+                            VerticalDivider(
+                              color: Colors.black,
+                              thickness: 2,
+                              width: 20,
+                            ),
+                            Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
                                   'Latitude',
-                                  style:  GoogleFonts.lato(textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                    color: Colors.black,
-                                  ),),
-                                ),
-                                SizedBox(
-                                  height: 5,
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22,
+                                      color: Colors.black,
+                                    ),
+                                  ),
                                 ),
                                 Text(
-                                  '13.0878',
-                                  style:  GoogleFonts.lato(textStyle: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 30,
-                                    color: Colors.white,
-                                  ),),
+                                  '${widget.lat}',
+                                  style: GoogleFonts.lato(
+                                    textStyle: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  ),
                                 ),
                               ],
                             ),
-                          ),VerticalDivider(
-                      color: Colors.black,
-                      thickness: 2,
-                      width: 20,
-                          ),
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'Country',
-                                style:  GoogleFonts.lato(textStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25,
-                                  color: Colors.black,
-                                ),),
-                              ),
-                              SizedBox(
-                                height: 5,
-                              ),
-                              Text(
-                                'IND',
-                                style:  GoogleFonts.lato(textStyle: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 30,
-                                  color: Colors.white,
-                                ),),
-                              ),
-                            ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -283,3 +399,14 @@ class _detailedState extends State<detailed> {
         ));
   }
 }
+
+// DateFormat dateFormat(date){
+//
+//
+//
+//   DateFormat formattedDate = DateFormat.yMMMMd('en_US');
+//   print(formattedDate.format(date));
+//
+//   return formattedDate;
+//
+// }

@@ -1,3 +1,3 @@
 
 
-const cities = ['Mumbai','London','Kolkata','Delhi','Singapore','Tokyo'];
+const cities = ['Mumbai','London','Kolkata','Washington','Singapore','Tokyo'];

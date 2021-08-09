@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 
 import '../widgets/city_tile.dart';
 import 'search_screen.dart';
@@ -11,7 +13,8 @@ import '../config/config.dart';
 import '../classes/temperature.dart';
 
 List<Temperature> tempList = [];
-
+String longitute = "";
+String latitute = "";
 Future<List<Temperature>> searchTemp() async {
   for (var i = 0; i < cities.length; i++) {
     var response = await http
@@ -24,9 +27,13 @@ Future<List<Temperature>> searchTemp() async {
     tempList.add(Temperature.fromJson(jsonDecode(response.body)));
 
     print('-----------//////${tempList[0].weatherCondition}');
+    print("_______///${tempList[0].pressure}");
+    print("-------????${tempList[0].humidity}");
+    print('-----------////${tempList[0].visibility}');
+    print('//////////////${tempList[0].country}');
+    print('.////////////${tempList[0].lon}');
   }
 
-  print('out of the loop');
   return tempList;
 }
 
@@ -38,21 +45,24 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late Future<List<Temperature>> futureTemp;
 
-  void getLocation()async{
-    print('getlocation called');
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  void getLocation() async {
+    final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
     print('position ================= $position');
     print('function');
-  }
 
+    setState(() {
+      print(position);
+      longitute = "${position.longitude}";
+      latitute = "${position.latitude}";
+    });
+  }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     futureTemp = searchTemp();
     getLocation();
-
   }
 
   @override
@@ -60,13 +70,14 @@ class _HomeState extends State<Home> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.cyan[300],
         appBar: AppBar(
           title: Center(
-              child: Text(
-            "Weather App",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
-          )),
+              child: Text("WEATHER_APP",
+                  style: GoogleFonts.lato(
+                    textStyle:
+                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                  ))),
           actions: [
             IconButton(
               onPressed: () {
@@ -85,94 +96,80 @@ class _HomeState extends State<Home> {
         ),
         body: SafeArea(
           child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: FutureBuilder(
-                  future: futureTemp,
-                  builder: (context, c) {
-                    if (!c.hasData) {
-                      return Center(child: CircularProgressIndicator());
-                    }
-                    return Column(
-                      children: [
-                        Container(
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            itemCount: tempList.length,
-                            itemBuilder: (context, i) {
-                              print('${cities[i]}');
+            child: FutureBuilder(
+                future: futureTemp,
+                builder: (context, c) {
+                  if (!c.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  return Column(
+                    children: [
+                      Container(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: tempList.length,
+                          itemBuilder: (context, i) {
+                            print('${cities[i]}');
 
-                              print(tempList[i].timezone);
-                              var utcTime = DateTime.now().toUtc();
+                            print(tempList[i].timezone);
+                            var utcTime = DateTime.now().toUtc();
 
-                              var addTime = utcTime
-                                  .add(Duration(seconds: tempList[i].timezone));
-                              IconData wIcon = Icons.add;
+                            var addTime = utcTime
+                                .add(Duration(seconds: tempList[i].timezone));
 
+                            // var formattedTime = DateFormat.yMMMMd('en_US');
+                            // print(formattedTime.format(addTime));
 
-                                switch (tempList[i].weatherCondition) {
-                                  case "Haze":
-                                    wIcon = Icons.cloud_rounded;
-                                    print(wIcon);
-                                    break;
+                            print(tempList[i].temp.round());
 
-                                  case "Clouds":
-                                    wIcon = Icons.cloud_done;
-                                    break;
+                            IconData wIcon = Icons.add;
 
-                                  case "Rain":
-                                    wIcon = Icons.cloud_download;
-                                    break;
+                            switch (tempList[i].weatherCondition) {
+                              case "Haze":
+                                wIcon = Icons.cloud_rounded;
+                                print(wIcon);
+                                break;
 
-                                  case "Clear":
-                                    wIcon = Icons.cloud_circle_outlined;
-                                    break;
+                              case "Clouds":
+                                wIcon = Icons.cloud_done;
+                                break;
 
-                                  case "Mist":
-                                    wIcon = Icons.visibility;
-                                    break;
+                              case "Rain":
+                                wIcon = Icons.cloud_download;
+                                break;
 
-                                  default:
-                                    wIcon = Icons.add;
-                                }
+                              case "Clear":
+                                wIcon = Icons.cloud_circle_outlined;
+                                break;
 
+                              case "Mist":
+                                wIcon = Icons.visibility;
+                                break;
 
-                              //  if(tempList[i].weatherCondition == 'Haze'){
-                              //
-                              //    wIcon = Icons.cloud_rounded;
-                              //  }
-                              // if(tempList[i].weatherCondition == 'Clouds'){
-                              //
-                              //   wIcon = Icons.cloud_done;
-                              // }
-                              // if(tempList[i].weatherCondition == 'Rain'){
-                              //
-                              //   wIcon = Icons.cloud_download;
-                              // }
-                              // if(tempList[i].weatherCondition == 'Clear'){
-                              //
-                              //   wIcon = Icons.cloud_circle_outlined;
-                              //
-                              // }
-                              // if(tempList[i].weatherCondition == 'Mist'){
-                              //
-                              //   wIcon = Icons.visibility;
-                              //
-                              // }
+                              default:
+                                wIcon = Icons.add;
+                            }
 
-                              return CityTile(
-                                  tempList[i].name,
-                                  tempList[i].temp,
-                                  addTime,
-                                  tempList[i].weatherCondition,
-                                  wIcon);
-                            },
-                          ),
+                            return CityTile(
+                                tempList[i].name,
+                                tempList[i].temp.round(),
+                                addTime,
+                                tempList[i].weatherCondition,
+                                wIcon,
+                                tempList[i].visibility,
+                                tempList[i].pressure,
+                                tempList[i].humidity,
+                                tempList[i].lon,
+                                tempList[i].lat,
+                                tempList[i].country,
+                                tempList[i].tempMin,
+                                tempList[i].tempMax);
+                          },
                         ),
-                      ],
-                    );
-                  }),
-            ),
+                      ),
+                    ],
+                  );
+                }),
           ),
         ),
       ),
