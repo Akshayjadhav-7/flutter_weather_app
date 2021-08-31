@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart' as http;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'search_screen.dart';
 
 import '../widgets/city_tile.dart';
 import 'search_screen.dart';
@@ -15,6 +16,7 @@ import '../classes/temperature.dart';
 List<Temperature> tempList = [];
 String longitute = "";
 String latitute = "";
+
 Future<List<Temperature>> searchTemp() async {
   for (var i = 0; i < cities.length; i++) {
     var response = await http
@@ -22,16 +24,16 @@ Future<List<Temperature>> searchTemp() async {
     if (response.statusCode != 200) {
       throw Exception('Failed to load album');
     }
-    print('${response.body} ${cities[i]} ${i}');
+    // print('${response.body} ${cities[i]} ${i}');
 
     tempList.add(Temperature.fromJson(jsonDecode(response.body)));
 
-    print('-----------//////${tempList[0].weatherCondition}');
-    print("_______///${tempList[0].pressure}");
-    print("-------????${tempList[0].humidity}");
-    print('-----------////${tempList[0].visibility}');
-    print('//////////////${tempList[0].country}');
-    print('.////////////${tempList[0].lon}');
+    // print('-----------//////${tempList[0].weatherCondition}');
+    // print("_______///${tempList[0].pressure}");
+    // print("-------????${tempList[0].humidity}");
+    // print('-----------////${tempList[0].visibility}');
+    // print('//////////////${tempList[0].country}');
+    // print('.////////////${tempList[0].lon}');
   }
 
   return tempList;
@@ -45,24 +47,28 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   late Future<List<Temperature>> futureTemp;
 
-  void getLocation() async {
-    final position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print('position ================= $position');
-    print('function');
-
-    setState(() {
-      print(position);
-      longitute = "${position.longitude}";
-      latitute = "${position.latitude}";
-    });
-  }
+  // void getLocation()async{
+  //
+  //   Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  //
+  //   print(position);
+  //   setState(() {
+  //     print('position pppppppppppppppppppppp$position');
+  //   });
+  //
+  // }
 
   @override
   void initState() {
     super.initState();
     futureTemp = searchTemp();
-    getLocation();
+    // getLocation();
+    searchLocation();
+    locationData(longitute, latitute);
+
+    // print(
+    //     '\n\nlatitute ===============kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkyyyyy$latitute');
+    // print(longitute);
   }
 
   @override
@@ -73,11 +79,13 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.cyan[300],
         appBar: AppBar(
           title: Center(
-              child: Text("WEATHER_APP",
-                  style: GoogleFonts.lato(
-                    textStyle:
-                        TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                  ))),
+            child: Text(
+              "WEATHER_APP",
+              style: GoogleFonts.lato(
+                textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
           actions: [
             IconButton(
               onPressed: () {
@@ -85,7 +93,7 @@ class _HomeState extends State<Home> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => search_screen(),
+                    builder: (context) => SearchScreen(),
                   ),
                 );
               },
@@ -106,12 +114,13 @@ class _HomeState extends State<Home> {
                     children: [
                       Container(
                         child: ListView.builder(
+                          primary: false,
                           shrinkWrap: true,
-                          itemCount: tempList.length,
+                          itemCount: cities.length,
                           itemBuilder: (context, i) {
-                            print('${cities[i]}');
+                            // print('${cities[i]}');
 
-                            print(tempList[i].timezone);
+                            // print(tempList[i].timezone);
                             var utcTime = DateTime.now().toUtc();
 
                             var addTime = utcTime
@@ -120,14 +129,14 @@ class _HomeState extends State<Home> {
                             // var formattedTime = DateFormat.yMMMMd('en_US');
                             // print(formattedTime.format(addTime));
 
-                            print(tempList[i].temp.round());
+                            // print(tempList[i].temp.round());
 
                             IconData wIcon = Icons.add;
 
                             switch (tempList[i].weatherCondition) {
                               case "Haze":
                                 wIcon = Icons.cloud_rounded;
-                                print(wIcon);
+                                // print(wIcon);
                                 break;
 
                               case "Clouds":
@@ -175,4 +184,6 @@ class _HomeState extends State<Home> {
       ),
     );
   }
+
+
 }

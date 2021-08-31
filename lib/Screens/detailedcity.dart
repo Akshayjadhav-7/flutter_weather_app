@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../widgets/city_tile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../classes/temperature.dart';
+import 'search_screen.dart';
 
 DateTime dateToday = new DateTime.now();
 String date = dateToday.toString().substring(0, 10);
